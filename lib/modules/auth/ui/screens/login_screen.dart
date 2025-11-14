@@ -45,11 +45,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     ref.listen(authProvider, (previous, next) {
-      if (next case AuthStateError(:final message)) {
+      if (next case AuthStateError(:final error)) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(message),
+            content: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(text: 'Erro [${error.code}]: '),
+                  TextSpan(text: error.message),
+                ],
+              ),
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Theme.of(context).colorScheme.onSurface,
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
           ),
         );
       }

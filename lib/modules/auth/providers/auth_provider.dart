@@ -1,3 +1,4 @@
+import 'package:fala_ufba/modules/auth/models/auth_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:fala_ufba/core/supabase_config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -9,10 +10,8 @@ sealed class AuthState {
 }
 
 class AuthStateAuthenticated extends AuthState {
-  final User user;
+  final UserModel user;
   const AuthStateAuthenticated(this.user);
-
-  String? get displayName => user.userMetadata?['display_name'] ?? user.email;
 }
 
 class AuthStateUnauthenticated extends AuthState {
@@ -20,8 +19,8 @@ class AuthStateUnauthenticated extends AuthState {
 }
 
 class AuthStateError extends AuthState {
-  final String message;
-  const AuthStateError(this.message);
+  final AuthError error;
+  const AuthStateError(this.error);
 }
 
 @Riverpod(keepAlive: true)
@@ -31,7 +30,7 @@ class Auth extends _$Auth {
     final session = supabase.auth.currentSession;
     if (session != null) {
       _initialize();
-      return AuthStateAuthenticated(session.user);
+      return AuthStateAuthenticated(UserModel.fromUser(session.user));
     }
     _initialize();
     return const AuthStateUnauthenticated();
@@ -40,7 +39,7 @@ class Auth extends _$Auth {
   void _initialize() {
     final session = supabase.auth.currentSession;
     if (session != null) {
-      state = AuthStateAuthenticated(session.user);
+      state = AuthStateAuthenticated(UserModel.fromUser(session.user));
     }
 
     supabase.auth.onAuthStateChange.listen((data) {
@@ -50,7 +49,7 @@ class Auth extends _$Auth {
       switch (event) {
         case AuthChangeEvent.signedIn:
           if (session != null) {
-            state = AuthStateAuthenticated(session.user);
+            state = AuthStateAuthenticated(UserModel.fromUser(session.user));
           }
           break;
         case AuthChangeEvent.signedOut:
@@ -70,12 +69,12 @@ class Auth extends _$Auth {
         password: password,
       );
       if (response.user != null) {
-        state = AuthStateAuthenticated(response.user!);
+        state = AuthStateAuthenticated(UserModel.fromUser(response.user!));
       }
     } on AuthApiException catch (e) {
-      state = AuthStateError(e.message);
+      state = AuthStateError(AuthError.fromAuthApiException(e));
     } catch (e) {
-      state = AuthStateError(e.toString());
+      state = AuthStateError(AuthError.fromGenericException(e));
     }
   }
 
@@ -84,9 +83,9 @@ class Auth extends _$Auth {
       await supabase.auth.signOut();
       state = const AuthStateUnauthenticated();
     } on AuthApiException catch (e) {
-      state = AuthStateError(e.message);
+      state = AuthStateError(AuthError.fromAuthApiException(e));
     } catch (e) {
-      state = const AuthStateError("Failed to sign out");
+      state = AuthStateError(AuthError.fromGenericException(e));
     }
   }
 
@@ -102,12 +101,12 @@ class Auth extends _$Auth {
         data: {'display_name': name},
       );
       if (response.user != null) {
-        state = AuthStateAuthenticated(response.user!);
+        state = AuthStateAuthenticated(UserModel.fromUser(response.user!));
       }
     } on AuthApiException catch (e) {
-      state = AuthStateError(e.message);
+      state = AuthStateError(AuthError.fromAuthApiException(e));
     } catch (e) {
-      state = AuthStateError(e.toString());
+      state = AuthStateError(AuthError.fromGenericException(e));
     }
   }
 }

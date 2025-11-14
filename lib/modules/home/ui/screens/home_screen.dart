@@ -13,12 +13,12 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
 
-    final authenticatedState = switch (authState) {
-      AuthStateAuthenticated() => authState,
+    final user = switch (authState) {
+      AuthStateAuthenticated(:final user) => user,
       _ => null,
     };
 
-    if (authenticatedState == null) {
+    if (user == null) {
       return const Scaffold(
         body: Center(child: Text('Usuário não encontrado')),
       );
@@ -41,7 +41,7 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Bem vindo(a), ${authenticatedState.displayName}!',
+                'Bem vindo(a), ${user.name}!',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 8),
