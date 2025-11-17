@@ -41,7 +41,7 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Bem vindo(a), ${user.name}!',
+                'Bem vindo(a), ${user.name ?? user.email}!',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 8),
