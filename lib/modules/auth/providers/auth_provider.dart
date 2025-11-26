@@ -98,7 +98,7 @@ class Auth extends _$Auth {
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
-        data: {'display_name': name},
+        data: {'full_name': name},
       );
       if (response.user != null) {
         state = AuthStateAuthenticated(UserModel.fromUser(response.user!));

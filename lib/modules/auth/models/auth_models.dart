@@ -16,7 +16,7 @@ class UserModel {
   UserModel.fromUser(User user)
     : id = user.id,
       email = user.email,
-      name = user.userMetadata?['display_name'],
+      name = user.userMetadata?['full_name'],
       createdAt = user.createdAt;
 }
 
