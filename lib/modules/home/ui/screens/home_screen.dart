@@ -26,7 +26,16 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset('assets/fala-ufba-logo.png', height: 30),
+        leading: IconButton(
+          onPressed: () {},
+          icon: CircleAvatar(
+            radius: 16,
+            backgroundImage: NetworkImage(
+              'https://avatar.iran.liara.run/public/19',
+            ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
