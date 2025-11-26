@@ -62,7 +62,7 @@ class Auth extends _$Auth {
     });
   }
 
-  Future<void> signIn(String email, String password) async {
+  Future<void> signIn({required String email, required String password}) async {
     try {
       final response = await supabase.auth.signInWithPassword(
         email: email,
