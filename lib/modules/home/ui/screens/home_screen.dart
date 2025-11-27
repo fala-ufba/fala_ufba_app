@@ -97,7 +97,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -112,9 +112,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onLocationChanged: (value) =>
                     setState(() => _selectedLocation = value),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Expanded(
                 child: ListView.separated(
+                  padding: const EdgeInsets.only(bottom: 16.0),
                   itemCount: _mockReports.length,
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 12),
