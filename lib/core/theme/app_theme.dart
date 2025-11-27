@@ -4,16 +4,24 @@ class AppTheme {
   static const Color primaryBlue = Color(0xFF2196F3);
   static const Color primaryBlueDark = Color(0xFF64B5F6);
 
+  static const Color successGreen = Color(0xFF4CAF50);
+  static const Color successGreenDark = Color(0xFF81C784);
+  static const Color accentGreen = Color(0xFF00C853);
+  static const Color accentGreenDark = Color(0xFF69F0AE);
+
   static final lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     colorScheme: ColorScheme.light(
       primary: primaryBlue,
       secondary: const Color(0xFF03A9F4),
+      tertiary: successGreen,
+      tertiaryContainer: const Color(0xFFC8E6C9),
       surface: Colors.white,
       error: const Color(0xFFD32F2F),
       onPrimary: Colors.white,
       onSecondary: Colors.white,
+      onTertiary: Colors.white,
       onSurface: const Color(0xFF212121),
       onError: Colors.white,
     ),
@@ -33,6 +41,7 @@ class AppTheme {
       ),
       bodyLarge: TextStyle(fontSize: 16, color: Color(0xFF212121)),
       bodyMedium: TextStyle(fontSize: 14, color: Color(0xFF757575)),
+      bodySmall: TextStyle(fontSize: 12, color: Color(0xFF757575)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -74,10 +83,13 @@ class AppTheme {
     colorScheme: ColorScheme.dark(
       primary: primaryBlueDark,
       secondary: const Color(0xFF42A5F5),
+      tertiary: successGreenDark,
+      tertiaryContainer: const Color(0xFF2E7D32),
       surface: const Color(0xFF1E1E1E),
       error: const Color(0xFFCF6679),
       onPrimary: Colors.black,
       onSecondary: Colors.white,
+      onTertiary: Colors.black,
       onSurface: Colors.white,
       onError: Colors.black,
     ),
@@ -97,6 +109,7 @@ class AppTheme {
       ),
       bodyLarge: TextStyle(fontSize: 16, color: Colors.white),
       bodyMedium: TextStyle(fontSize: 14, color: Colors.white70),
+      bodySmall: TextStyle(fontSize: 12, color: Colors.white70),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
