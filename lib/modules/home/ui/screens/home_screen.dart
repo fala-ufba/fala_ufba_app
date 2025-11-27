@@ -5,10 +5,6 @@ import 'package:fala_ufba/modules/auth/providers/auth_provider.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
-    await ref.read(authProvider.notifier).signOut();
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
@@ -25,24 +21,6 @@ class HomeScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: CircleAvatar(
-            radius: 16,
-            backgroundImage: NetworkImage(
-              'https://avatar.iran.liara.run/public/19',
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => _handleLogout(context, ref),
-          ),
-        ],
-      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

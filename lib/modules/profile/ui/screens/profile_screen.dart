@@ -77,6 +77,12 @@ class ProfileScreen extends ConsumerWidget {
                 title: 'Notificações',
                 onTap: () {},
               ),
+              _buildOptionTile(
+                context,
+                icon: Icons.campaign,
+                title: 'Meus reportes',
+                onTap: () {},
+              ),
               const Spacer(),
               _buildThemeSwitcher(context, ref, currentThemeMode),
               const SizedBox(height: 24),
