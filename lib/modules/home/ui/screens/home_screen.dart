@@ -3,6 +3,7 @@ import 'package:fala_ufba/modules/home/ui/widgets/filter_chips.dart';
 import 'package:fala_ufba/modules/home/ui/widgets/report_card.dart';
 import 'package:fala_ufba/modules/home/ui/widgets/search_bar.dart';
 import 'package:fala_ufba/modules/reports/models/report.dart';
+import 'package:fala_ufba/modules/shared/loading/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fala_ufba/modules/auth/providers/auth_provider.dart';
@@ -63,27 +64,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 16),
               ReportSearchBar(controller: _searchController),
               const SizedBox(height: 12),
-              FilterChips(
-                selectedStatus: selectedStatus,
-                selectedLocation: selectedLocation,
-                onStatusChanged: (value) {
-                  final status = value == 'Todos'
-                      ? null
-                      : ReportStatus.values.firstWhere(
-                          (s) => s.displayName == value,
-                          orElse: () => ReportStatus.unknown,
-                        );
-                  ref.read(homeProvider.notifier).updateStatus(status);
-                },
-                onLocationChanged: (value) {
-                  final location = value == 'Todos' ? null : value;
-                  ref.read(homeProvider.notifier).updateLocation(location);
-                },
+              Row(
+                children: [
+                  FilterChips(
+                    selectedStatus: selectedStatus,
+                    selectedLocation: selectedLocation,
+                    onStatusChanged: (value) {
+                      final status = value == 'Todos'
+                          ? null
+                          : ReportStatus.values.firstWhere(
+                              (s) => s.displayName == value,
+                              orElse: () => ReportStatus.unknown,
+                            );
+                      ref.read(homeProvider.notifier).updateStatus(status);
+                    },
+                    onLocationChanged: (value) {
+                      final location = value == 'Todos' ? null : value;
+                      ref.read(homeProvider.notifier).updateLocation(location);
+                    },
+                  ),
+                  if (homeState.isLoading && homeState.reports.isNotEmpty)
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 16),
               Expanded(
                 child: homeState.isLoading && homeState.reports.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Container(
+                        alignment: Alignment.topCenter,
+                        child: const LoadingWidget(),
+                      )
                     : homeState.error != null
                     ? Center(child: Text(homeState.error!))
                     : RefreshIndicator(

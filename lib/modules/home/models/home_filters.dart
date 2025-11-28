@@ -31,4 +31,15 @@ class HomeFilters {
     'Biblioteca',
     'Reitoria',
   ];
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HomeFilters &&
+          status == other.status &&
+          location == other.location &&
+          searchQuery == other.searchQuery;
+
+  @override
+  int get hashCode => Object.hash(status, location, searchQuery);
 }

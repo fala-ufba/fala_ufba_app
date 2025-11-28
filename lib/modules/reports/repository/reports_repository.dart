@@ -11,7 +11,8 @@ ReportsRepository reportsRepository(Ref ref) {
 
 class ReportsRepository {
   Future<List<Report>> getReports(HomeFilters filters) async {
-    // await Future.delayed(const Duration(seconds: 2));
+    // Emulate a delay of the request to the database. Remove this when the request is implemented.
+    await Future.delayed(const Duration(seconds: 2));
 
     var reports = _mockReports;
 

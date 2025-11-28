@@ -43,14 +43,19 @@ class Home extends _$Home {
   }
 
   Future<void> fetchReports() async {
-    final currentFilters = state.filters;
+    final filtersAtRequest = state.filters;
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
       final repository = ref.read(reportsRepositoryProvider);
-      final reports = await repository.getReports(currentFilters);
+      final reports = await repository.getReports(filtersAtRequest);
+
+      if (state.filters != filtersAtRequest) return;
+
       state = state.copyWith(reports: reports, isLoading: false);
     } catch (e) {
+      if (state.filters != filtersAtRequest) return;
+
       state = state.copyWith(
         isLoading: false,
         error: 'Erro ao carregar reportes: $e',
