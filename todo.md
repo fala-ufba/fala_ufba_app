@@ -54,4 +54,47 @@ TELA 5 - REPORTAR
         2) Local (teremos um dropdown com as localidades possíveis), Descrição do Local (Andar, sala, corredor, etc)
         3) Anexos (fotos -> usuário pode abrir a câmera no momento ou selecionar uma foto da galeria)
 
-TELA 6 
+TELA 6
+
+
+
+## ENTIDADES
+
+```sql
+    CREATE TYPE profile_role as ENUM ('Visitante', 'Discente', 'Docente', 'Servidor');
+
+    CREATE TABLE profiles IF NOT EXISTS (
+        id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(20),
+        role profile_role DEFAULT 'Visitante',
+        course VARCHAR(255),
+        department VARCHAR(255),
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TYPE campus as ENUM ('Ondina/Federação', 'Canela', 'Piedade');
+
+    CREATE TABLE buildings IF NOT EXISTS (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        campus
+        created_at TIMESTAMP DEFAULT NOW()
+    );
+
+    CREATE TYPE report_status AS ENUM ('UNKNOWN', 'OPEN', 'IN_PROGRESS', 'SOLVED', 'CLOSED');
+
+    CREATE TABLE reports IF NOT EXISTS (
+        id SERIAL PRIMARY KEY,
+        public_id VARCHAR(32) UNIQUE,
+        reporter_id UUID NOT NULL,
+        title VARCHAR(60) NOT NULL,
+        description TEXT,
+        attachments TEXT[],
+        status report_status NOT NULL DEFAULT 'OPEN',
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );
+```
