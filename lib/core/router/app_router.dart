@@ -2,7 +2,7 @@ import 'package:fala_ufba/modules/auth/ui/screens/login_screen.dart';
 import 'package:fala_ufba/modules/auth/ui/screens/signup_screen.dart';
 import 'package:fala_ufba/modules/home/ui/screens/home_screen.dart';
 import 'package:fala_ufba/modules/profile/ui/screens/profile_screen.dart';
-import 'package:fala_ufba/modules/report/ui/screens/report_screen.dart';
+import 'package:fala_ufba/modules/reports/ui/screens/report_screen.dart';
 import 'package:fala_ufba/modules/shared/navigation_menu/navigation_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
