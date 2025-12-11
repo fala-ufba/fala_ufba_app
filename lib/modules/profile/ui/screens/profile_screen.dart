@@ -9,7 +9,6 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    final currentThemeMode = ref.watch(appThemeModeProvider);
 
     final user = switch (authState) {
       AuthStateAuthenticated(:final user) => user,
@@ -59,32 +58,28 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: 24),
               const Divider(),
               const SizedBox(height: 8),
-              _buildOptionTile(
-                context,
+              _ProfileOptionTile(
                 icon: Icons.person_outline,
                 title: 'Informações Pessoais',
                 onTap: () {},
               ),
-              _buildOptionTile(
-                context,
+              _ProfileOptionTile(
                 icon: Icons.lock_outline,
                 title: 'Senha e segurança',
                 onTap: () {},
               ),
-              _buildOptionTile(
-                context,
+              _ProfileOptionTile(
                 icon: Icons.notifications_outlined,
                 title: 'Notificações',
                 onTap: () {},
               ),
-              _buildOptionTile(
-                context,
+              _ProfileOptionTile(
                 icon: Icons.campaign,
                 title: 'Meus reportes',
                 onTap: () {},
               ),
               const Spacer(),
-              _buildThemeSwitcher(context, ref, currentThemeMode),
+              _ThemeSwitcher(),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -103,13 +98,21 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildOptionTile(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
+class _ProfileOptionTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  const _ProfileOptionTile({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
@@ -121,12 +124,14 @@ class ProfileScreen extends ConsumerWidget {
       onTap: onTap,
     );
   }
+}
 
-  Widget _buildThemeSwitcher(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeMode currentMode,
-  ) {
+class _ThemeSwitcher extends ConsumerWidget {
+  const _ThemeSwitcher();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentMode = ref.watch(appThemeModeProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
