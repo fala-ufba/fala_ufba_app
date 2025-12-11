@@ -80,7 +80,7 @@ TELA 6
     CREATE TABLE buildings IF NOT EXISTS (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
-        campus
+        campus campus,
         created_at TIMESTAMP DEFAULT NOW()
     );
 
@@ -92,8 +92,25 @@ TELA 6
         reporter_id UUID NOT NULL,
         title VARCHAR(60) NOT NULL,
         description TEXT,
+        building_id INT REFERENCES buildings(id),
         attachments TEXT[],
         status report_status NOT NULL DEFAULT 'OPEN',
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE report_upvotes IF NOT EXISTS (
+        report_id INT NOT NULL REFERENCES reports(id) ON DELETE CASCADE,
+        user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (report_id, user_id)
+    );
+
+    CREATE TABLE report_comments IF NOT EXISTS (
+        id SERIAL PRIMARY KEY,
+        report_id INT NOT NULL REFERENCES reports(id) ON DELETE CASCADE,
+        user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
