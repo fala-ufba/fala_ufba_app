@@ -64,33 +64,27 @@ Optional code generation (if you see @riverpod or build_runner usage):
 fvm dart run build_runner build -d
 ```
 
-## Environment variables (env/dev.json)
+## Environment variables
 
-Create a `env/dev.json` file at the project root to store local secrets. An example is provided below.
+Create a `.env` file at the project root to store local secrets.
 
-1) Create `env/dev.json` with the required keys:
-```json
-{
-    "SUPABASE_URL": "YOUR_SUPABASE_URL",
-    "SUPABASE_PUB_KEY": "YOUR_SUPABASE_PUB_KEY"
-}
-```
-
-2) Copy and fill your local `.env`:
+1) Copy the example file and fill in your values:
 - macOS/Linux:
 ```bash
-cp /env/dev.example.json /env/dev.json
+cp .env.example .env
 ```
 - Windows (PowerShell):
 ```powershell
-copy /env/dev.example.json /env/dev.json
+copy .env.example .env
 ```
 
-3) `.env` is already ignored by Git
-The repository `.gitignore` includes `.env`, so your local secrets will not be committed.
+2) Edit `.env` with your Supabase credentials:
+```
+SUPABASE_URL=your_supabase_url_here
+SUPABASE_PUB_KEY=your_supabase_pub_key_here
+```
 
-4) How this is used today
-The app currently reads Supabase values from `lib/core/supabase_config.dart`. Keep your `env/dev.json` in sync and update that file locally with your values.
+3) `.env` is already ignored by Git, so your local secrets will not be committed.
 
 ## VS Code setup (uses FVM)
 
@@ -113,12 +107,11 @@ The app currently reads Supabase values from `lib/core/supabase_config.dart`. Ke
       "name": "Fala UFBA (Debug)",
       "request": "launch",
       "type": "dart",
-      "args": ["--dart-define-from-file=env/dev.json"],
+      "args": ["--dart-define-from-file=.env"],
       "toolArgs": ["--no-start-paused"]
     }
   ]
 }
-
 ```
 
 Select a device in the VS Code status bar, then press F5 to run.
