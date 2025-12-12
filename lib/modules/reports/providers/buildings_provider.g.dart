@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'home_provider.dart';
+part of 'buildings_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,51 +9,52 @@ part of 'home_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(Home)
-const homeProvider = HomeProvider._();
+@ProviderFor(Buildings)
+const buildingsProvider = BuildingsProvider._();
 
-final class HomeProvider extends $NotifierProvider<Home, HomeState> {
-  const HomeProvider._()
+final class BuildingsProvider
+    extends $NotifierProvider<Buildings, List<Building>> {
+  const BuildingsProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'homeProvider',
+        name: r'buildingsProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$homeHash();
+  String debugGetCreateSourceHash() => _$buildingsHash();
 
   @$internal
   @override
-  Home create() => Home();
+  Buildings create() => Buildings();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(HomeState value) {
+  Override overrideWithValue(List<Building> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<HomeState>(value),
+      providerOverride: $SyncValueProvider<List<Building>>(value),
     );
   }
 }
 
-String _$homeHash() => r'203f03de9fb2505b1c8fde4b53a1035e3af087a6';
+String _$buildingsHash() => r'08b40c8ce4665f21b6220f29cca28eaa1e2d9b52';
 
-abstract class _$Home extends $Notifier<HomeState> {
-  HomeState build();
+abstract class _$Buildings extends $Notifier<List<Building>> {
+  List<Building> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<HomeState, HomeState>;
+    final ref = this.ref as $Ref<List<Building>, List<Building>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<HomeState, HomeState>,
-              HomeState,
+              AnyNotifier<List<Building>, List<Building>>,
+              List<Building>,
               Object?,
               Object?
             >;
