@@ -1,3 +1,4 @@
+import 'package:fala_ufba/core/supabase_config.dart';
 import 'package:fala_ufba/modules/home/models/home_filters.dart';
 import 'package:fala_ufba/modules/reports/models/building.dart';
 import 'package:fala_ufba/modules/reports/models/report.dart';
@@ -11,6 +12,31 @@ ReportsRepository reportsRepository(Ref ref) {
 }
 
 class ReportsRepository {
+  Future<Report> createReport({
+    required String title,
+    String? description,
+    int? buildingId,
+    String? buildingSpecifier,
+    String? publicId,
+  }) async {
+    final userId = supabase.auth.currentUser!.id;
+    final response = await supabase
+        .from('reports')
+        .insert({
+          'public_id': publicId,
+          'reporter_id': userId,
+          'title': title,
+          'description': description,
+          'building_id': buildingId,
+          'building_specifier': buildingSpecifier,
+          'attachments': <String>[],
+          'status': 'OPEN',
+        })
+        .select('*, building:buildings(*)')
+        .single();
+    return Report.fromJson(response);
+  }
+
   Future<List<Report>> getReports(HomeFilters filters) async {
     // Emulate a delay of the request to the database. Remove this when the request is implemented.
     await Future.delayed(const Duration(seconds: 2));

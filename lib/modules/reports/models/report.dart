@@ -69,7 +69,7 @@ class Report {
   factory Report.fromJson(Map<String, dynamic> json) {
     return Report(
       id: json['id'] as int,
-      publicId: json['public_id'] as String,
+      publicId: json['public_id'] as String?,
       reporterId: json['reporter_id'] as String,
       title: json['title'] as String,
       description: json['description'] as String?,
