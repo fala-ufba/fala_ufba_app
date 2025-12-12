@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:fala_ufba/modules/auth/providers/auth_provider.dart';
 import 'package:fala_ufba/core/theme/theme_provider.dart';
 
@@ -61,7 +62,7 @@ class ProfileScreen extends ConsumerWidget {
               _ProfileOptionTile(
                 icon: Icons.person_outline,
                 title: 'Informações Pessoais',
-                onTap: () {},
+                onTap: () => context.go('/perfil/editar'),
               ),
               _ProfileOptionTile(
                 icon: Icons.lock_outline,
