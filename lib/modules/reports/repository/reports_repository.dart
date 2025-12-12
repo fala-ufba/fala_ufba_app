@@ -1,4 +1,5 @@
 import 'package:fala_ufba/modules/home/models/home_filters.dart';
+import 'package:fala_ufba/modules/reports/models/building.dart';
 import 'package:fala_ufba/modules/reports/models/report.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -28,7 +29,7 @@ class ReportsRepository {
       reports = reports
           .where(
             (report) =>
-                report.location?.toLowerCase().contains(
+                report.building?.name.toLowerCase().contains(
                   filters.location!.toLowerCase(),
                 ) ??
                 false,
@@ -60,7 +61,13 @@ class ReportsRepository {
       description:
           'Ar condicionado Midea pingando bastante quando a temperatura está abaixo de 20°C, só para quando é desligado.',
       status: ReportStatus.open,
-      location: 'PAF2 - Sala 301',
+      building: Building(
+        id: 1,
+        name: 'PAF2',
+        campus: Campus.ondinaFederacao,
+        createdAt: DateTime(2025, 11, 26, 14, 32),
+      ),
+      buildingSpecifier: 'Sala 301',
       attachments: ['https://img.olx.com.br/images/52/525571229749184.jpg'],
       createdAt: DateTime(2025, 11, 26, 14, 32),
       updatedAt: DateTime(2025, 11, 26, 14, 32),
@@ -73,7 +80,13 @@ class ReportsRepository {
       description:
           'O elevador do PAF1 está parando entre os andares e fazendo barulhos estranhos. Já ficou travado 2 vezes essa semana.',
       status: ReportStatus.inProgress,
-      location: 'PAF1 - Térreo',
+      building: Building(
+        id: 1,
+        name: 'PAF1',
+        campus: Campus.ondinaFederacao,
+        createdAt: DateTime(2025, 11, 26, 14, 32),
+      ),
+      buildingSpecifier: 'Térreo',
       attachments: [],
       createdAt: DateTime(2025, 11, 25, 9, 15),
       updatedAt: DateTime(2025, 11, 25, 9, 15),
@@ -86,7 +99,13 @@ class ReportsRepository {
       description:
           'Vazamento na pia do banheiro feminino do 2º andar. Água acumulando no chão e causando risco de escorregão.',
       status: ReportStatus.solved,
-      location: 'Biblioteca - 2º Andar',
+      building: Building(
+        id: 1,
+        name: 'Biblioteca',
+        campus: Campus.ondinaFederacao,
+        createdAt: DateTime(2025, 11, 26, 14, 32),
+      ),
+      buildingSpecifier: '2º Andar',
       attachments: ['https://img.olx.com.br/images/69/697506821099630.jpg'],
       createdAt: DateTime(2025, 11, 22, 16, 40),
       updatedAt: DateTime(2025, 11, 22, 16, 40),
@@ -99,7 +118,13 @@ class ReportsRepository {
       description:
           'Três lâmpadas queimadas no corredor principal do térreo. À noite fica muito escuro e perigoso para transitar.',
       status: ReportStatus.open,
-      location: 'PAF3 - Corredor Térreo',
+      building: Building(
+        id: 1,
+        name: 'PAF3',
+        campus: Campus.ondinaFederacao,
+        createdAt: DateTime(2025, 11, 26, 14, 32),
+      ),
+      buildingSpecifier: 'Corredor Térreo',
       attachments: [],
       createdAt: DateTime(2025, 11, 26, 8, 20),
       updatedAt: DateTime(2025, 11, 26, 8, 20),
@@ -112,7 +137,13 @@ class ReportsRepository {
       description:
           'Projetor não liga há 3 dias. Professores estão tendo que mudar de sala para dar aula, atrapalhando a grade.',
       status: ReportStatus.inProgress,
-      location: 'PAF2 - Sala 205',
+      building: Building(
+        id: 1,
+        name: 'PAF2',
+        campus: Campus.ondinaFederacao,
+        createdAt: DateTime(2025, 11, 26, 14, 32),
+      ),
+      buildingSpecifier: 'Sala 205',
       attachments: ['https://img.olx.com.br/images/79/799587078940577.jpg'],
       createdAt: DateTime(2025, 11, 24, 11, 55),
       updatedAt: DateTime(2025, 11, 24, 11, 55),

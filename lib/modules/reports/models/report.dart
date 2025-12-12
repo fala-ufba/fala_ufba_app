@@ -1,3 +1,4 @@
+import 'package:fala_ufba/modules/reports/models/building.dart';
 import 'package:flutter/material.dart';
 
 enum ReportStatus {
@@ -40,13 +41,14 @@ enum ReportStatus {
 
 class Report {
   final int id;
-  final String publicId;
+  final String? publicId;
   final String reporterId;
   final String title;
   final String? description;
+  final Building? building;
+  final String? buildingSpecifier;
   final List<String> attachments;
   final ReportStatus status;
-  final String? location;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -56,9 +58,10 @@ class Report {
     required this.reporterId,
     required this.title,
     this.description,
+    this.building,
+    this.buildingSpecifier,
     this.attachments = const [],
     required this.status,
-    this.location,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -70,13 +73,16 @@ class Report {
       reporterId: json['reporter_id'] as String,
       title: json['title'] as String,
       description: json['description'] as String?,
+      building: json['building'] != null
+          ? Building.fromJson(json['building'] as Map<String, dynamic>)
+          : null,
+      buildingSpecifier: json['building_specifier'] as String?,
       attachments:
           (json['attachments'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
       status: ReportStatus.fromString(json['status'] as String),
-      location: json['location'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -91,7 +97,8 @@ class Report {
       'description': description,
       'attachments': attachments,
       'status': status.value,
-      'location': location,
+      'building': building?.toJson(),
+      'building_specifier': buildingSpecifier,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -105,7 +112,8 @@ class Report {
     String? description,
     List<String>? attachments,
     ReportStatus? status,
-    String? location,
+    Building? building,
+    String? buildingSpecifier,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -117,7 +125,8 @@ class Report {
       description: description ?? this.description,
       attachments: attachments ?? this.attachments,
       status: status ?? this.status,
-      location: location ?? this.location,
+      building: building ?? this.building,
+      buildingSpecifier: buildingSpecifier ?? this.buildingSpecifier,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

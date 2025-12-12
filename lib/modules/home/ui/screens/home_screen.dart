@@ -125,10 +125,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   return ReportCard(
                                     status: report.status.displayName,
                                     statusColor: report.status.color,
-                                    id: report.publicId,
+                                    id: report.publicId ?? '',
                                     title: report.title,
                                     description: report.description ?? '',
-                                    location: report.location ?? '',
+                                    location: report.building?.name ?? '',
                                     updatedAt: _formatDate(report.updatedAt),
                                     imagePath: report.attachments.isNotEmpty
                                         ? report.attachments.first
