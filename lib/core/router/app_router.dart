@@ -45,53 +45,53 @@ class RouterNotifier extends ChangeNotifier {
   }
 
   List<RouteBase> get _routes => [
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) =>
-          ScaffoldWithNavBar(navigationShell: navigationShell),
-      branches: [
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/',
-              pageBuilder: (context, state) =>
-                  const NoTransitionPage(child: HomeScreen()),
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) =>
+              ScaffoldWithNavBar(navigationShell: navigationShell),
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/',
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: HomeScreen()),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/reportar',
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: ReportScreen()),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/perfil',
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: ProfileScreen()),
+                ),
+              ],
             ),
           ],
         ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/reportar',
-              pageBuilder: (context, state) =>
-                  const NoTransitionPage(child: ReportScreen()),
-            ),
-          ],
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          path: '/login',
+          builder: (context, state) => const LoginScreen(),
         ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/perfil',
-              pageBuilder: (context, state) =>
-                  const NoTransitionPage(child: ProfileScreen()),
-            ),
-          ],
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          path: '/signup',
+          builder: (context, state) => const SignupScreen(),
         ),
-      ],
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      path: '/signup',
-      builder: (context, state) => const SignupScreen(),
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      path: '/perfil/editar',
-      builder: (context, state) => const EditProfileScreen(),
-    ),
-  ];
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          path: '/perfil/editar',
+          builder: (context, state) => const EditProfileScreen(),
+        ),
+      ];
 }
