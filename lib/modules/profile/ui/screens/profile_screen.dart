@@ -1,5 +1,7 @@
+import 'package:fala_ufba/modules/profile/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:fala_ufba/modules/auth/providers/auth_provider.dart';
 import 'package:fala_ufba/core/theme/theme_provider.dart';
 
@@ -8,91 +10,99 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(profileProvider);
     final authState = ref.watch(authProvider);
 
-    final user = switch (authState) {
-      AuthStateAuthenticated(:final user) => user,
+    final email = switch (authState) {
+      AuthStateAuthenticated(:final user) => user.email,
       _ => null,
     };
-
-    if (user == null) {
-      return const Scaffold(
-        body: Center(child: Text('Usuário não encontrado')),
-      );
-    }
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              Row(
+          child: profileState.when(
+            data: (profile) {
+              if (profile == null) {
+                return const Center(child: Text('Usuário não encontrado'));
+              }
+              return Column(
                 children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundImage: NetworkImage(
-                      'https://avatar.iran.liara.run/public/19',
-                    ),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 32,
+                        backgroundImage: const NetworkImage(
+                          'https://avatar.iran.liara.run/public/19',
+                        ),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              profile.name,
+                              style: Theme.of(context).textTheme.displayMedium,
+                            ),
+                            const SizedBox(height: 4),
+                            if (email != null)
+                              Text(
+                                email,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user.name ?? 'Usuário',
-                          style: Theme.of(context).textTheme.displayMedium,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          user.email ?? '',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
+                  const SizedBox(height: 24),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  _ProfileOptionTile(
+                    icon: Icons.person_outline,
+                    title: 'Informações Pessoais',
+                    onTap: () => context.go('/perfil/editar'),
+                  ),
+                  _ProfileOptionTile(
+                    icon: Icons.lock_outline,
+                    title: 'Senha e segurança',
+                    onTap: () {},
+                  ),
+                  _ProfileOptionTile(
+                    icon: Icons.notifications_outlined,
+                    title: 'Notificações',
+                    onTap: () {},
+                  ),
+                  _ProfileOptionTile(
+                    icon: Icons.campaign,
+                    title: 'Meus reportes',
+                    onTap: () {},
+                  ),
+                  const Spacer(),
+                  _ThemeSwitcher(),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () =>
+                          ref.read(authProvider.notifier).signOut(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onError,
+                      ),
+                      child: const Text('Sair'),
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 24),
-              const Divider(),
-              const SizedBox(height: 8),
-              _ProfileOptionTile(
-                icon: Icons.person_outline,
-                title: 'Informações Pessoais',
-                onTap: () {},
-              ),
-              _ProfileOptionTile(
-                icon: Icons.lock_outline,
-                title: 'Senha e segurança',
-                onTap: () {},
-              ),
-              _ProfileOptionTile(
-                icon: Icons.notifications_outlined,
-                title: 'Notificações',
-                onTap: () {},
-              ),
-              _ProfileOptionTile(
-                icon: Icons.campaign,
-                title: 'Meus reportes',
-                onTap: () {},
-              ),
-              const Spacer(),
-              _ThemeSwitcher(),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => ref.read(authProvider.notifier).signOut(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    foregroundColor: Theme.of(context).colorScheme.onError,
-                  ),
-                  child: const Text('Sair'),
-                ),
-              ),
-            ],
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) =>
+                Center(child: Text('Erro: $error')),
           ),
         ),
       ),
