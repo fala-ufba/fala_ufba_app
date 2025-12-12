@@ -11,12 +11,14 @@ class ReportFormData {
   final String description;
   final Building? building;
   final String buildingSpecifier;
+  final List<String> attachments;
 
   const ReportFormData({
     this.title = '',
     this.description = '',
     this.building,
     this.buildingSpecifier = '',
+    this.attachments = const [],
   });
 
   ReportFormData copyWith({
@@ -24,6 +26,7 @@ class ReportFormData {
     String? description,
     Building? building,
     String? buildingSpecifier,
+    List<String>? attachments,
     bool clearBuilding = false,
   }) {
     return ReportFormData(
@@ -31,6 +34,7 @@ class ReportFormData {
       description: description ?? this.description,
       building: clearBuilding ? null : (building ?? this.building),
       buildingSpecifier: buildingSpecifier ?? this.buildingSpecifier,
+      attachments: attachments ?? this.attachments,
     );
   }
 }
@@ -136,6 +140,7 @@ class ReportForm extends _$ReportForm {
             ? null
             : state.formData.buildingSpecifier,
         publicId: publicId,
+        attachments: state.formData.attachments,
       );
 
       state = ReportFormStateSuccess(

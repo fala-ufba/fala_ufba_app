@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fala_ufba/core/supabase_config.dart';
 import 'package:fala_ufba/modules/home/models/home_filters.dart';
 import 'package:fala_ufba/modules/reports/models/building.dart';
@@ -12,12 +14,31 @@ ReportsRepository reportsRepository(Ref ref) {
 }
 
 class ReportsRepository {
+  Future<String> uploadImage(Uint8List imageBytes, String fileName) async {
+    final extension = fileName.split('.').last.toLowerCase();
+    if (!['png', 'jpg', 'jpeg'].contains(extension)) {
+      throw Exception('Formato inválido. Apenas PNG e JPEG são permitidos.');
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (imageBytes.length > maxSize) {
+      throw Exception('Imagem muito grande. Máximo permitido: 5MB.');
+    }
+
+    final path = 'reports/$fileName';
+    await supabase.storage
+        .from('test_report_images')
+        .uploadBinary(path, imageBytes);
+    return supabase.storage.from('test_report_images').getPublicUrl(path);
+  }
+
   Future<Report> createReport({
     required String title,
     String? description,
     int? buildingId,
     String? buildingSpecifier,
     String? publicId,
+    List<String> attachments = const [],
   }) async {
     final userId = supabase.auth.currentUser!.id;
     final response = await supabase
@@ -29,7 +50,7 @@ class ReportsRepository {
           'description': description,
           'building_id': buildingId,
           'building_specifier': buildingSpecifier,
-          'attachments': <String>[],
+          'attachments': attachments,
           'status': 'OPEN',
         })
         .select('*, building:buildings(*)')
