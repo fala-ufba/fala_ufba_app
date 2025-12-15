@@ -55,4 +55,4 @@ final class BuildingsRepositoryProvider
 }
 
 String _$buildingsRepositoryHash() =>
-    r'30f2cd57aee04df164b89648a2a957969dc170a8';
+    r'a65472c93a522f73c62294d0728d9bbcae79150e';
