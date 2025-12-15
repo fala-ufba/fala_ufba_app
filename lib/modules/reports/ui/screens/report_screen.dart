@@ -1,3 +1,4 @@
+import 'package:fala_ufba/modules/reports/providers/buildings_provider.dart';
 import 'package:fala_ufba/modules/reports/providers/report_form_provider.dart';
 import 'package:fala_ufba/modules/reports/ui/widgets/report_navigation_buttons.dart';
 import 'package:fala_ufba/modules/reports/ui/widgets/report_step_content.dart';
@@ -22,7 +23,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(availableBuildingsProvider));
+    Future.microtask(() => ref.read(buildingsProvider));
   }
 
   @override

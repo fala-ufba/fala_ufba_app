@@ -1,4 +1,5 @@
 import 'package:fala_ufba/modules/reports/models/building.dart';
+import 'package:fala_ufba/modules/reports/providers/buildings_provider.dart';
 import 'package:fala_ufba/modules/reports/providers/report_form_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +16,7 @@ class ReportLocationStep extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final buildingsAsync = ref.watch(availableBuildingsProvider);
+    final buildingsAsync = ref.watch(buildingsProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -32,7 +33,7 @@ class ReportLocationStep extends ConsumerWidget {
               _BuildingDropdown(buildings: buildings, formState: formState),
           loading: () => const _BuildingDropdownLoading(),
           error: (error, stack) => _BuildingDropdownError(
-            onRetry: () => ref.invalidate(availableBuildingsProvider),
+            onRetry: () => ref.invalidate(buildingsProvider),
           ),
         ),
         const SizedBox(height: 16),

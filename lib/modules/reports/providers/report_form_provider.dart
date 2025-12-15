@@ -1,5 +1,4 @@
 import 'package:fala_ufba/modules/reports/models/building.dart';
-import 'package:fala_ufba/modules/reports/repository/buildings_repository.dart';
 import 'package:fala_ufba/modules/reports/repository/reports_repository.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -166,10 +165,4 @@ class ReportForm extends _$ReportForm {
   String generateNanoId({int size = 6}) {
     return customAlphabet('AaBbCcDdEeFf0123456789', size);
   }
-}
-
-@riverpod
-Future<List<Building>> availableBuildings(Ref ref) async {
-  final repository = ref.read(buildingsRepositoryProvider);
-  return repository.getAllBuildings();
 }
