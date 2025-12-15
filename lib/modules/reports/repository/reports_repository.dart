@@ -58,6 +58,25 @@ class ReportsRepository {
     return Report.fromJson(response);
   }
 
+  Future<({List<Report> reports, bool hasNextPage})> getPaginatedReports({
+    required int page,
+    required int pageSize,
+  }) async {
+    final response = await supabase
+        .from('reports')
+        .select('*, building:buildings(*)')
+        .order('created_at', ascending: false)
+        .range((page - 1) * pageSize, page * pageSize);
+
+    final hasNextPage = response.length > pageSize;
+    final reports = response
+        .take(pageSize)
+        .map((e) => Report.fromJson(e))
+        .toList();
+
+    return (reports: reports, hasNextPage: hasNextPage);
+  }
+
   Future<List<Report>> getReports(HomeFilters filters) async {
     // Emulate a delay of the request to the database. Remove this when the request is implemented.
     await Future.delayed(const Duration(seconds: 2));

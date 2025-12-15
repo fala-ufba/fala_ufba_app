@@ -105,7 +105,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ? Center(child: Text(homeState.error!))
                     : RefreshIndicator(
                         onRefresh: () =>
-                            ref.read(homeProvider.notifier).fetchReports(),
+                            ref.read(homeProvider.notifier).getFirstPage(),
                         child: homeState.reports.isEmpty
                             ? ListView(
                                 children: const [
