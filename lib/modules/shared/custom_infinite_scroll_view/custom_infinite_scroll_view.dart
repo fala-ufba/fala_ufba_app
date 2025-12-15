@@ -6,11 +6,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 class CustomInfiniteScrollView extends HookWidget {
   final List<Widget> slivers;
+  final double bottomPadding;
   final FutureOr<void> Function()? onEndScroll;
 
   const CustomInfiniteScrollView({
     super.key,
     required this.slivers,
+    this.bottomPadding = 16.0,
     this.onEndScroll,
   });
 
@@ -26,7 +28,7 @@ class CustomInfiniteScrollView extends HookWidget {
         return false;
       },
       child: CustomScrollView(
-        slivers: [...slivers, const SliverSpacing.vertical(16)],
+        slivers: [...slivers, SliverSpacing.vertical(bottomPadding)],
         shrinkWrap: true,
         physics: const ClampingScrollPhysics(),
       ),

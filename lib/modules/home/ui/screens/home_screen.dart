@@ -1,12 +1,15 @@
+import 'package:fala_ufba/modules/auth/providers/auth_provider.dart';
 import 'package:fala_ufba/modules/home/providers/home_provider.dart';
 import 'package:fala_ufba/modules/home/ui/widgets/filter_chips.dart';
 import 'package:fala_ufba/modules/home/ui/widgets/report_card.dart';
 import 'package:fala_ufba/modules/home/ui/widgets/search_bar.dart';
+import 'package:fala_ufba/modules/home/ui/widgets/sliver_loading_indicator.dart';
 import 'package:fala_ufba/modules/reports/models/report.dart';
+import 'package:fala_ufba/modules/shared/custom_infinite_scroll_view/custom_infinite_scroll_view.dart';
 import 'package:fala_ufba/modules/shared/loading/loading_widget.dart';
+import 'package:fala_ufba/modules/shared/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fala_ufba/modules/auth/providers/auth_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +20,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _searchController = TextEditingController();
+  final _isLoadingMore = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -28,11 +32,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _isLoadingMore.dispose();
     super.dispose();
   }
 
   void _onSearchChanged() {
     ref.read(homeProvider.notifier).updateSearchQuery(_searchController.text);
+  }
+
+  Future<void> _loadNextPage() async {
+    _isLoadingMore.value = true;
+    await ref.read(homeProvider.notifier).getNextPage();
+    _isLoadingMore.value = false;
   }
 
   @override
@@ -106,17 +117,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     : RefreshIndicator(
                         onRefresh: () =>
                             ref.read(homeProvider.notifier).getFirstPage(),
-                        child: homeState.reports.isEmpty
-                            ? ListView(
-                                children: const [
-                                  SizedBox(height: 200),
-                                  Center(
-                                    child: Text('Nenhum reporte encontrado'),
+                        child: CustomInfiniteScrollView(
+                          onEndScroll: _loadNextPage,
+                          bottomPadding: 40,
+                          slivers: [
+                            if (homeState.reports.isEmpty)
+                              const SliverFillRemaining(
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    spacing: 8,
+                                    children: [
+                                      Icon(Icons.search_off_outlined, size: 64),
+                                      Text('Nenhum reporte encontrado'),
+                                    ],
                                   ),
-                                ],
+                                ),
                               )
-                            : ListView.separated(
-                                padding: const EdgeInsets.only(bottom: 16.0),
+                            else
+                              SliverList.separated(
                                 itemCount: homeState.reports.length,
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(height: 12),
@@ -129,13 +148,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     title: report.title,
                                     description: report.description ?? '',
                                     location: report.building?.name ?? '',
-                                    updatedAt: _formatDate(report.updatedAt),
+                                    updatedAt: Utils.formatDate(
+                                      report.updatedAt,
+                                    ),
                                     imagePath: report.attachments.isNotEmpty
                                         ? report.attachments.first
                                         : null,
                                   );
                                 },
                               ),
+                            SliverLoadingIndicator(isLoading: _isLoadingMore),
+                          ],
+                        ),
                       ),
               ),
             ],
@@ -143,14 +167,5 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    final day = date.day.toString().padLeft(2, '0');
-    final month = date.month.toString().padLeft(2, '0');
-    final year = date.year;
-    final hour = date.hour.toString().padLeft(2, '0');
-    final minute = date.minute.toString().padLeft(2, '0');
-    return '$day/$month/$year às ${hour}h$minute';
   }
 }
