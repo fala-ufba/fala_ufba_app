@@ -132,4 +132,41 @@ class Home extends _$Home {
     state = state.copyWith(filters: const HomeFilters());
     getFirstPage();
   }
+
+  Future<void> removeUpvote(int reportId) async {
+    try {
+      final repository = ref.read(reportsRepositoryProvider);
+      await repository.removeUpvote(reportId: reportId);
+    } catch (e) {
+      state = state.copyWith(
+        error: 'Erro ao remover voto: $e',
+      );
+    }
+  }
+
+  Future<List<String>> getUserUpvotedReports() async {
+    try {
+      final repository = ref.read(reportsRepositoryProvider);
+
+      final votedReports = await repository.getUserUpvotedReports();
+
+      return votedReports;
+    } catch (e) {
+      state = state.copyWith(
+        error: 'Erro ao carregar votos do usuário: $e',
+      );
+      rethrow;
+    }
+  }
+  
+  Future<void> upvoteReport(int reportId) async {
+    try {
+      final repository = ref.read(reportsRepositoryProvider);
+      await repository.upvoteReport(reportId: reportId);
+    } catch (e) {
+      state = state.copyWith(
+        error: 'Erro ao registrar voto: $e',
+      );
+    }
+  }
 }

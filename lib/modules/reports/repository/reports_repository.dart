@@ -118,6 +118,46 @@ class ReportsRepository {
     return reports;
   }
 
+  Future<void> upvoteReport({required int reportId, }) async {
+    final user = supabase.auth.currentUser;
+      if (user == null) {
+      throw Exception('Usuário não autenticado');
+    }
+
+    await supabase.from('report_votes').insert({
+      'report_id': reportId,
+      'user_id': user.id,
+    });
+  }
+
+  Future<void> removeUpvote({required int reportId}) async {
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw Exception('Usuário não autenticado');
+    }
+
+    await supabase
+        .from('report_votes')
+        .delete()
+        .eq('report_id', reportId)
+        .eq('user_id', user.id);
+  } 
+  
+  Future<List<String>> getUserUpvotedReports() async {
+    final user = supabase.auth.currentUser;
+    if (user == null) return [];
+
+  final response = await supabase
+      .from('report_votes')
+      .select('report_id, report:reports(public_id)')
+      .eq('user_id', user.id);
+
+  return (response as List)
+      .where((e) => e['report'] != null && e['report']['public_id'] != null)
+      .map<String>((e) => e['report']['public_id'] as String)
+      .toList();
+  }
+
   static final List<Report> _mockReports = [
     Report(
       id: 1,

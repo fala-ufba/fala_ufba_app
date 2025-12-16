@@ -21,11 +21,16 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _searchController = TextEditingController();
   final _isLoadingMore = ValueNotifier<bool>(false);
+  final Set<String> _upvotedReports = {};
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _loadUpvotedReports();
+  });
   }
 
   @override
@@ -44,6 +49,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _isLoadingMore.value = true;
     await ref.read(homeProvider.notifier).getNextPage();
     _isLoadingMore.value = false;
+  }
+  
+  Future<void> _loadUpvotedReports() async {
+    final authState = ref.read(authProvider);
+
+    if (authState is! AuthStateAuthenticated) {
+      return;
+    }
+
+    try {
+      final votedReports = await ref
+          .read(homeProvider.notifier)
+          .getUserUpvotedReports();
+          
+      setState(() {
+        _upvotedReports
+          ..clear()
+          ..addAll(votedReports);
+      });
+    } catch (e) {
+      debugPrint('Erro ao carregar votos: $e');
+    }
   }
 
   @override
@@ -141,6 +168,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     const SizedBox(height: 12),
                                 itemBuilder: (context, index) {
                                   final report = homeState.reports[index];
+                                  final isUpvoted =
+                                      report.publicId != null &&
+                                      _upvotedReports.contains(report.publicId);
+                                      
                                   return ReportCard(
                                     status: report.status.displayName,
                                     statusColor: report.status.color,
@@ -154,6 +185,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     imagePath: report.attachments.isNotEmpty
                                         ? report.attachments.first
                                         : null,
+                                    isUpvoted: isUpvoted,
+                                    onUpvote: () async {
+                                      final wasUpvoted = isUpvoted;
+
+                                      setState(() {
+                                        if (wasUpvoted) {
+                                          _upvotedReports.remove(report.publicId);
+                                        } else {
+                                          _upvotedReports.add(report.publicId!);
+                                        }
+                                      });
+
+                                      try {
+                                        if (wasUpvoted) {
+                                          await ref
+                                              .read(homeProvider.notifier)
+                                              .removeUpvote(report.id);
+                                        } else {
+                                          await ref
+                                              .read(homeProvider.notifier)
+                                              .upvoteReport(report.id);
+                                        }
+                                      } catch (e) {
+                                        setState(() {
+                                          if (wasUpvoted) {
+                                            _upvotedReports.add(report.publicId!);
+                                          } else {
+                                            _upvotedReports.remove(report.publicId);
+                                          }
+                                        });
+
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Erro ao atualizar voto')),
+                                        );
+                                      }
+                                    },
                                   );
                                 },
                               ),
