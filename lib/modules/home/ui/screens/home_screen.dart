@@ -68,13 +68,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
+              Text(
+                'Fala UFBA',
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Acompanhe os reportes da comunidade',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontSize: 16,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
+              ),
+              const SizedBox(height: 24),
               ReportSearchBar(controller: _searchController),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Row(
                 children: [
                   FilterChips(
@@ -105,7 +123,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               Expanded(
                 child: homeState.isLoading && homeState.reports.isEmpty
                     ? Container(
@@ -122,14 +140,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           bottomPadding: 40,
                           slivers: [
                             if (homeState.reports.isEmpty)
-                              const SliverFillRemaining(
+                              SliverFillRemaining(
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    spacing: 8,
+                                    spacing: 12,
                                     children: [
-                                      Icon(Icons.search_off_outlined, size: 64),
-                                      Text('Nenhum reporte encontrado'),
+                                      Icon(
+                                        Icons.search_off_outlined,
+                                        size: 80,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.3),
+                                      ),
+                                      Text(
+                                        'Nenhum reporte encontrado',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -138,7 +172,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               SliverList.separated(
                                 itemCount: homeState.reports.length,
                                 separatorBuilder: (context, index) =>
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: 16),
                                 itemBuilder: (context, index) {
                                   final report = homeState.reports[index];
                                   return ReportCard(
