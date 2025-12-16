@@ -2,6 +2,7 @@ import 'package:fala_ufba/modules/auth/ui/screens/login_screen.dart';
 import 'package:fala_ufba/modules/auth/ui/screens/signup_screen.dart';
 import 'package:fala_ufba/modules/home/ui/screens/home_screen.dart';
 import 'package:fala_ufba/modules/profile/ui/screens/profile_screen.dart';
+import 'package:fala_ufba/modules/reports/ui/screens/report_detail_screen.dart';
 import 'package:fala_ufba/modules/reports/ui/screens/report_screen.dart';
 import 'package:fala_ufba/modules/shared/navigation_menu/navigation_menu.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,16 @@ class RouterNotifier extends ChangeNotifier {
               path: '/',
               pageBuilder: (context, state) =>
                   const NoTransitionPage(child: HomeScreen()),
+              routes: [
+                GoRoute(
+                  path: 'reporte/:id',
+                  builder: (context, state) {
+                    final id = state.pathParameters['id']!;
+                    final title = state.uri.queryParameters['title'] ?? '';
+                    return ReportDetailScreen(reportId: id, reportTitle: title);
+                  },
+                ),
+              ],
             ),
           ],
         ),
