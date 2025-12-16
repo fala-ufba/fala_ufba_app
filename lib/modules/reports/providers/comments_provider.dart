@@ -108,13 +108,9 @@ class Comments extends _$Comments {
         content: content,
       );
 
-      state = state.copyWith(
-        comments: [newComment, ...state.comments],
-      );
+      state = state.copyWith(comments: [newComment, ...state.comments]);
     } catch (e) {
-      state = state.copyWith(
-        error: 'Erro ao adicionar comentário: $e',
-      );
+      state = state.copyWith(error: 'Erro ao adicionar comentário: $e');
       rethrow;
     }
   }

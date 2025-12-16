@@ -189,10 +189,7 @@ class ReportsRepository {
     final hasNextPage = response.length > pageSize;
     final comments = response.take(pageSize).map((e) {
       final userName = e['profile']?['full_name'] as String? ?? 'Usuário';
-      return Comment.fromJson({
-        ...e,
-        'user_name': userName,
-      });
+      return Comment.fromJson({...e, 'user_name': userName});
     }).toList();
 
     return (comments: comments, hasNextPage: hasNextPage);
@@ -209,19 +206,12 @@ class ReportsRepository {
 
     final response = await supabase
         .from('report_comments')
-        .insert({
-          'report_id': reportId,
-          'user_id': user.id,
-          'content': content,
-        })
+        .insert({'report_id': reportId, 'user_id': user.id, 'content': content})
         .select('*, profile:profiles!user_id(full_name)')
         .single();
 
     final userName = response['profile']?['full_name'] as String? ?? 'Usuário';
-    return Comment.fromJson({
-      ...response,
-      'user_name': userName,
-    });
+    return Comment.fromJson({...response, 'user_name': userName});
   }
 
   static final List<Report> _mockReports = [

@@ -81,10 +81,9 @@ class _CommentInputState extends State<CommentInput> {
                 hintText: 'Adicione um comentário...',
                 hintStyle: TextStyle(
                   fontSize: 15,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 filled: false,
                 contentPadding: const EdgeInsets.symmetric(
@@ -94,19 +93,17 @@ class _CommentInputState extends State<CommentInput> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -139,12 +136,12 @@ class _CommentInputState extends State<CommentInput> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
             style: IconButton.styleFrom(
-              backgroundColor:
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-              disabledBackgroundColor: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.05),
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.1),
+              disabledBackgroundColor: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.05),
             ),
           ),
         ],

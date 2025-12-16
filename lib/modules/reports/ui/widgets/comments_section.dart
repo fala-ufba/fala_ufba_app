@@ -7,10 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class CommentsSection extends ConsumerStatefulWidget {
   final int reportId;
 
-  const CommentsSection({
-    super.key,
-    required this.reportId,
-  });
+  const CommentsSection({super.key, required this.reportId});
 
   @override
   ConsumerState<CommentsSection> createState() => _CommentsSectionState();
@@ -35,9 +32,9 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      ref.read(commentsProvider(widget.reportId).notifier).loadNextPage(
-            widget.reportId,
-          );
+      ref
+          .read(commentsProvider(widget.reportId).notifier)
+          .loadNextPage(widget.reportId);
     }
   }
 
@@ -56,27 +53,26 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
               Text(
                 'Comentários',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${commentsState.comments.length}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
               ),
             ],
@@ -100,12 +96,9 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
         if (commentsState.isLoading && commentsState.comments.isEmpty)
           const Padding(
             padding: EdgeInsets.all(40),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+            child: Center(child: CircularProgressIndicator()),
           )
-        else if (commentsState.error != null &&
-            commentsState.comments.isEmpty)
+        else if (commentsState.error != null && commentsState.comments.isEmpty)
           Padding(
             padding: const EdgeInsets.all(40),
             child: Center(
@@ -143,30 +136,27 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
                   Icon(
                     Icons.chat_bubble_outline,
                     size: 48,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Nenhum comentário ainda',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Seja o primeiro a comentar!',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.5),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.5),
+                    ),
                   ),
                 ],
               ),
@@ -178,7 +168,8 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.all(20),
-            itemCount: commentsState.comments.length +
+            itemCount:
+                commentsState.comments.length +
                 (commentsState.hasNextPage ? 1 : 0),
             separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
@@ -200,9 +191,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
                 );
               }
 
-              return CommentItem(
-                comment: commentsState.comments[index],
-              );
+              return CommentItem(comment: commentsState.comments[index]);
             },
           ),
       ],
