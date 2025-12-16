@@ -66,36 +66,37 @@ class _FilterDropdownChip extends StatelessWidget {
 
     return PopupMenuButton<String>(
       onSelected: onChanged,
-      offset: const Offset(0, 40),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      offset: const Offset(0, 45),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       itemBuilder: (context) => options
           .map(
             (option) => PopupMenuItem(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               value: option,
               child: Row(
                 children: [
                   if (option == value)
                     Icon(
                       Icons.check_rounded,
-                      size: 18,
+                      size: 22,
                       color: Theme.of(context).colorScheme.primary,
                     )
                   else
-                    const SizedBox(width: 18),
-                  const SizedBox(width: 8),
-                  Text(option),
+                    const SizedBox(width: 22),
+                  const SizedBox(width: 12),
+                  Text(option, style: const TextStyle(fontSize: 15)),
                 ],
               ),
             ),
           )
           .toList(),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isActive
               ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
               : Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isActive
                 ? Theme.of(context).colorScheme.primary
@@ -113,14 +114,14 @@ class _FilterDropdownChip extends StatelessWidget {
                 color: isActive
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.onSurface,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                fontSize: 13,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                fontSize: 15,
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 6),
             Icon(
               Icons.arrow_drop_down_rounded,
-              size: 20,
+              size: 24,
               color: isActive
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(
