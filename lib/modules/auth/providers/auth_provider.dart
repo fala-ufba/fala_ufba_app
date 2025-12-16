@@ -98,9 +98,12 @@ class Auth extends _$Auth {
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
-        data: {'full_name': name},
       );
       if (response.user != null) {
+        await supabase.from('profiles').insert({
+          'id': response.user!.id,
+          'name': name,
+        });
         state = AuthStateAuthenticated(UserModel.fromUser(response.user!));
       }
     } on AuthApiException catch (e) {
