@@ -9,6 +9,8 @@ class ReportCard extends StatelessWidget {
   final String location;
   final String updatedAt;
   final String? imagePath;
+  final bool isUpvoted;
+  final VoidCallback onUpvote;
 
   const ReportCard({
     super.key,
@@ -19,6 +21,8 @@ class ReportCard extends StatelessWidget {
     required this.description,
     required this.location,
     required this.updatedAt,
+    required this.onUpvote,
+    required this.isUpvoted,
     this.imagePath,
   });
 
@@ -245,10 +249,11 @@ class ReportCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               FilledButton.icon(
-                onPressed: () {},
-                style: FilledButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.tertiary,
-                  foregroundColor: Theme.of(context).colorScheme.onTertiary,
+                  onPressed: () {
+                    onUpvote();
+                  },                
+                  style: FilledButton.styleFrom(
+                  backgroundColor: Colors.grey,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 8,
