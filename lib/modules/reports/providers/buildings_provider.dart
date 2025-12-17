@@ -7,5 +7,5 @@ part 'buildings_provider.g.dart';
 @Riverpod(keepAlive: true)
 Future<List<Building>> buildings(Ref ref) async {
   final repository = ref.watch(buildingsRepositoryProvider);
-  return repository.getAllBuildings();
+  return await repository.getAllBuildings();
 }

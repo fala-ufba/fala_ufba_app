@@ -27,10 +27,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
-    
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    _loadUpvotedReports();
-  });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUpvotedReports();
+    });
   }
 
   @override
@@ -50,7 +50,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     await ref.read(homeProvider.notifier).getNextPage();
     _isLoadingMore.value = false;
   }
-  
+
   Future<void> _loadUpvotedReports() async {
     final authState = ref.read(authProvider);
 
@@ -62,7 +62,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final votedReports = await ref
           .read(homeProvider.notifier)
           .getUserUpvotedReports();
-          
+
       setState(() {
         _upvotedReports
           ..clear()
@@ -90,7 +90,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
 
     final selectedStatus = homeState.filters.status?.displayName ?? 'Todos';
-    final selectedLocation = homeState.filters.location ?? 'Todos';
+    // Encontrar o nome do building pelo ID armazenado no filtro
+    final selectedLocation = homeState.filters.location != null
+        ? homeState.buildings
+                  .where((b) => b.id.toString() == homeState.filters.location)
+                  .map((b) => b.name)
+                  .firstOrNull ??
+              'Todos'
+        : 'Todos';
 
     return Scaffold(
       body: SafeArea(
@@ -125,6 +132,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   FilterChips(
                     selectedStatus: selectedStatus,
                     selectedLocation: selectedLocation,
+                    buildings: homeState.buildings,
                     onStatusChanged: (value) {
                       final status = value == 'Todos'
                           ? null
@@ -134,8 +142,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             );
                       ref.read(homeProvider.notifier).updateStatus(status);
                     },
-                    onLocationChanged: (value) {
-                      final location = value == 'Todos' ? null : value;
+                    onLocationChanged: (buildingId) {
+                      final location = buildingId == 'Todos'
+                          ? null
+                          : buildingId;
                       ref.read(homeProvider.notifier).updateLocation(location);
                     },
                   ),
@@ -158,7 +168,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         child: const LoadingWidget(),
                       )
                     : homeState.error != null
-                    ? Center(child: Text(homeState.error!))
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 16,
+                            children: [
+                              Icon(
+                                Icons.error_outline_rounded,
+                                size: 80,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                              Text(
+                                'Erro ao carregar reportes',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.w600),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                'Ocorreu um problema ao buscar os reportes. Por favor, tente novamente.',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.7),
+                                    ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              FilledButton.icon(
+                                onPressed: () {
+                                  ref
+                                      .read(homeProvider.notifier)
+                                      .getFirstPage();
+                                },
+                                icon: const Icon(Icons.refresh_rounded),
+                                label: const Text('Tentar novamente'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
                     : RefreshIndicator(
                         onRefresh: () =>
                             ref.read(homeProvider.notifier).getFirstPage(),
@@ -169,29 +221,66 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             if (homeState.reports.isEmpty)
                               SliverFillRemaining(
                                 child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    spacing: 12,
-                                    children: [
-                                      Icon(
-                                        Icons.search_off_outlined,
-                                        size: 80,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withValues(alpha: 0.3),
-                                      ),
-                                      Text(
-                                        'Nenhum reporte encontrado',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(24.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      spacing: 16,
+                                      children: [
+                                        Icon(
+                                          Icons.search_off_outlined,
+                                          size: 80,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.3),
+                                        ),
+                                        Text(
+                                          'Nenhum reporte encontrado',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          'Não há reportes que correspondam aos filtros selecionados.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withValues(alpha: 0.6),
+                                              ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        if (homeState.filters.status != null ||
+                                            homeState.filters.location !=
+                                                null ||
+                                            homeState
+                                                .filters
+                                                .searchQuery
+                                                .isNotEmpty)
+                                          OutlinedButton.icon(
+                                            onPressed: () {
+                                              ref
+                                                  .read(homeProvider.notifier)
+                                                  .clearFilters();
+                                              _searchController.clear();
+                                            },
+                                            icon: const Icon(
+                                              Icons.clear_all_rounded,
                                             ),
-                                      ),
-                                    ],
+                                            label: const Text('Limpar filtros'),
+                                          ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               )
@@ -205,7 +294,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   final isUpvoted =
                                       report.publicId != null &&
                                       _upvotedReports.contains(report.publicId);
-                                      
+
                                   return ReportCard(
                                     status: report.status.displayName,
                                     statusColor: report.status.color,
@@ -220,13 +309,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         ? report.attachments.first
                                         : null,
                                     isUpvoted: isUpvoted,
-                                    likes: homeState.votesCountMap?[report.id] ?? 0,
+                                    likes:
+                                        homeState.votesCountMap?[report.id] ??
+                                        0,
                                     onUpvote: () async {
                                       final wasUpvoted = isUpvoted;
+                                      final messenger = ScaffoldMessenger.of(
+                                        context,
+                                      );
 
                                       setState(() {
                                         if (wasUpvoted) {
-                                          _upvotedReports.remove(report.publicId);
+                                          _upvotedReports.remove(
+                                            report.publicId,
+                                          );
                                         } else {
                                           _upvotedReports.add(report.publicId!);
                                         }
@@ -243,16 +339,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                               .upvoteReport(report.id);
                                         }
                                       } catch (e) {
+                                        if (!mounted) return;
                                         setState(() {
                                           if (wasUpvoted) {
-                                            _upvotedReports.add(report.publicId!);
+                                            _upvotedReports.add(
+                                              report.publicId!,
+                                            );
                                           } else {
-                                            _upvotedReports.remove(report.publicId);
+                                            _upvotedReports.remove(
+                                              report.publicId,
+                                            );
                                           }
                                         });
 
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Erro ao atualizar voto')),
+                                        messenger.showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Erro ao atualizar voto',
+                                            ),
+                                          ),
                                         );
                                       }
                                     },
