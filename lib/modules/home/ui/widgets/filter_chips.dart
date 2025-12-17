@@ -1,4 +1,5 @@
 import 'package:fala_ufba/modules/reports/models/building.dart';
+import 'package:fala_ufba/modules/reports/models/report.dart';
 import 'package:flutter/material.dart';
 
 class FilterChips extends StatelessWidget {
@@ -28,7 +29,10 @@ class FilterChips extends StatelessWidget {
           _FilterDropdownChip(
             label: 'Status',
             value: selectedStatus,
-            options: ['Todos', 'Aberto', 'Em andamento', 'Resolvido'],
+            options: ReportStatus.values
+                .where((s) => s != ReportStatus.unknown)
+                .map((s) => s.displayName)
+                .toList(),
             onChanged: onStatusChanged,
           ),
           _BuildingFilterDropdownChip(
