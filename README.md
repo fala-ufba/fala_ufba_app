@@ -51,8 +51,8 @@ fvm --version
 ## Clone and bootstrap
 
 ```bash
-git clone https://github.com/your-org-or-user/fala_ufba.git
-cd fala_ufba
+git clone https://github.com/fala-ufba/fala_ufba_app.git
+cd fala_ufba_app
 fvm install
 fvm use
 fvm flutter doctor
