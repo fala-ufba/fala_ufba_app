@@ -243,7 +243,7 @@ class ReportCard extends StatelessWidget {
                         size: 14,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.5),
+                        ).colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
                       const SizedBox(width: 4),
                       Flexible(
@@ -254,7 +254,7 @@ class ReportCard extends StatelessWidget {
                                 fontSize: 13,
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withOpacity(0.7),
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -272,10 +272,10 @@ class ReportCard extends StatelessWidget {
                     color: isUpvoted
                         ? Theme.of(
                             context,
-                          ).colorScheme.tertiary.withOpacity(0.15)
+                          ).colorScheme.tertiary.withValues(alpha: 0.15)
                         : Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.1),
+                          ).colorScheme.onSurface.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isUpvoted
@@ -286,8 +286,8 @@ class ReportCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                     GestureDetector(
-                        behavior: HitTestBehavior.translucent, 
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         onTap: onUpvote,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -297,10 +297,8 @@ class ReportCard extends StatelessWidget {
                               size: 22,
                               color: isUpvoted
                                   ? Theme.of(context).colorScheme.tertiary
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withOpacity(0.6),
+                                  : Theme.of(context).colorScheme.onSurface
+                                        .withValues(alpha: 0.6),
                             ),
                             const SizedBox(width: 6),
                             Text(
@@ -309,25 +307,31 @@ class ReportCard extends StatelessWidget {
                                 fontSize: 12,
                                 color: isUpvoted
                                     ? Theme.of(context).colorScheme.tertiary
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withOpacity(0.8),
+                                    : Theme.of(context).colorScheme.onSurface
+                                          .withValues(alpha: 0.8),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             const SizedBox(width: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
                                 likes.toString(),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                     ),
                               ),
                             ),
@@ -337,7 +341,7 @@ class ReportCard extends StatelessWidget {
                     ],
                   ),
                 ),
-              ],                            
+              ],
             ),
           ],
         ),

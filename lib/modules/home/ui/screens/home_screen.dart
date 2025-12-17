@@ -4,7 +4,6 @@ import 'package:fala_ufba/modules/home/ui/widgets/filter_chips.dart';
 import 'package:fala_ufba/modules/home/ui/widgets/report_card.dart';
 import 'package:fala_ufba/modules/home/ui/widgets/search_bar.dart';
 import 'package:fala_ufba/modules/home/ui/widgets/sliver_loading_indicator.dart';
-import 'package:fala_ufba/modules/reports/models/building.dart';
 import 'package:fala_ufba/modules/reports/models/report.dart';
 import 'package:fala_ufba/modules/shared/custom_infinite_scroll_view/custom_infinite_scroll_view.dart';
 import 'package:fala_ufba/modules/shared/loading/loading_widget.dart';
@@ -315,6 +314,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         0,
                                     onUpvote: () async {
                                       final wasUpvoted = isUpvoted;
+                                      final messenger = ScaffoldMessenger.of(
+                                        context,
+                                      );
 
                                       setState(() {
                                         if (wasUpvoted) {
@@ -337,6 +339,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                               .upvoteReport(report.id);
                                         }
                                       } catch (e) {
+                                        if (!mounted) return;
                                         setState(() {
                                           if (wasUpvoted) {
                                             _upvotedReports.add(
@@ -349,9 +352,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           }
                                         });
 
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
+                                        messenger.showSnackBar(
                                           const SnackBar(
                                             content: Text(
                                               'Erro ao atualizar voto',
