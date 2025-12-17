@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:fala_ufba/core/supabase_config.dart';
 import 'package:fala_ufba/modules/home/models/home_filters.dart';
 import 'package:fala_ufba/modules/reports/models/building.dart';
+import 'package:fala_ufba/modules/reports/models/comment.dart';
 import 'package:fala_ufba/modules/reports/models/report.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -77,6 +78,21 @@ class ReportsRepository {
     return (reports: reports, hasNextPage: hasNextPage);
   }
 
+  Future<Report?> getReportByPublicId(String publicId) async {
+    try {
+      final response = await supabase
+          .from('reports')
+          .select('*, building:buildings(*)')
+          .eq('public_id', publicId)
+          .maybeSingle();
+
+      if (response == null) return null;
+      return Report.fromJson(response);
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<List<Report>> getReports(HomeFilters filters) async {
     // Emulate a delay of the request to the database. Remove this when the request is implemented.
     await Future.delayed(const Duration(seconds: 2));
@@ -118,9 +134,9 @@ class ReportsRepository {
     return reports;
   }
 
-  Future<void> upvoteReport({required int reportId, }) async {
+  Future<void> upvoteReport({required int reportId}) async {
     final user = supabase.auth.currentUser;
-      if (user == null) {
+    if (user == null) {
       throw Exception('Usuário não autenticado');
     }
 
@@ -141,21 +157,61 @@ class ReportsRepository {
         .delete()
         .eq('report_id', reportId)
         .eq('user_id', user.id);
-  } 
-  
+  }
+
   Future<List<String>> getUserUpvotedReports() async {
     final user = supabase.auth.currentUser;
     if (user == null) return [];
 
-  final response = await supabase
-      .from('report_votes')
-      .select('report_id, report:reports(public_id)')
-      .eq('user_id', user.id);
+    final response = await supabase
+        .from('report_votes')
+        .select('report_id, report:reports(public_id)')
+        .eq('user_id', user.id);
 
-  return (response as List)
-      .where((e) => e['report'] != null && e['report']['public_id'] != null)
-      .map<String>((e) => e['report']['public_id'] as String)
-      .toList();
+    return (response as List)
+        .where((e) => e['report'] != null && e['report']['public_id'] != null)
+        .map<String>((e) => e['report']['public_id'] as String)
+        .toList();
+  }
+
+  Future<({List<Comment> comments, bool hasNextPage})> getReportComments({
+    required int reportId,
+    required int page,
+    required int pageSize,
+  }) async {
+    final response = await supabase
+        .from('report_comments')
+        .select('*, profile:profiles!user_id(full_name)')
+        .eq('report_id', reportId)
+        .order('created_at', ascending: false)
+        .range((page - 1) * pageSize, page * pageSize);
+
+    final hasNextPage = response.length > pageSize;
+    final comments = response.take(pageSize).map((e) {
+      final userName = e['profile']?['full_name'] as String? ?? 'Usuário';
+      return Comment.fromJson({...e, 'user_name': userName});
+    }).toList();
+
+    return (comments: comments, hasNextPage: hasNextPage);
+  }
+
+  Future<Comment> addComment({
+    required int reportId,
+    required String content,
+  }) async {
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw Exception('Usuário não autenticado');
+    }
+
+    final response = await supabase
+        .from('report_comments')
+        .insert({'report_id': reportId, 'user_id': user.id, 'content': content})
+        .select('*, profile:profiles!user_id(full_name)')
+        .single();
+
+    final userName = response['profile']?['full_name'] as String? ?? 'Usuário';
+    return Comment.fromJson({...response, 'user_name': userName});
   }
 
   static final List<Report> _mockReports = [
