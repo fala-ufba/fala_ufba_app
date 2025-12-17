@@ -6,6 +6,7 @@ import 'package:fala_ufba/modules/reports/models/building.dart';
 import 'package:fala_ufba/modules/reports/models/comment.dart';
 import 'package:fala_ufba/modules/reports/models/report.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'reports_repository.g.dart';
 
@@ -212,6 +213,17 @@ class ReportsRepository {
 
     final userName = response['profile']?['full_name'] as String? ?? 'Usuário';
     return Comment.fromJson({...response, 'user_name': userName});
+  }
+  
+  Future<int> getReportVotesCount({required int reportId}) async {
+    final response = await supabase
+        .from('report_votes')
+        .select('id')
+        .eq('report_id', reportId)
+        .count(CountOption.exact);  
+
+    final totalVotes = response.count ?? 0;
+    return totalVotes;
   }
 
   static final List<Report> _mockReports = [
