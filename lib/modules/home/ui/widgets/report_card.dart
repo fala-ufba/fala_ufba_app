@@ -278,14 +278,14 @@ class ReportCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  icon: const Icon(Icons.thumb_up_rounded, size: 16),
-                  label: Text(
-                    'Também Vi!',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  icon: Icon(
+                    Icons.thumb_up_rounded,
+                    color: isUpvoted
+                        ? Theme.of(context).colorScheme.tertiary
+                        : Theme.of(context).colorScheme.onTertiary,
                   ),
+                  label: const Text('Também Vi!', style: TextStyle(color: Colors.white),),
+                  
                 ),
               ],
             ),
