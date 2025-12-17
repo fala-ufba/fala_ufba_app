@@ -180,14 +180,37 @@ class ReportsRepository {
       throw Exception('Usuário não autenticado');
     }
 
+    // Ensure the user has a profile row to satisfy FK constraints
+    await _ensureUserProfile(user);
+
     final response = await supabase
-        .from('report_comments')
-        .insert({'report_id': reportId, 'user_id': user.id, 'content': content})
-        .select('*, profile:profiles!user_id(full_name)')
-        .single();
+      .from('report_comments')
+      .insert({'report_id': reportId, 'user_id': user.id, 'content': content})
+      .select('*, profile:profiles(full_name)')
+      .single();
 
     final userName = response['profile']?['full_name'] as String? ?? 'Usuário';
     return Comment.fromJson({...response, 'user_name': userName});
+  }
+
+  Future<void> _ensureUserProfile(User user) async {
+    final existingProfile = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    if (existingProfile != null) return;
+
+    final fullName = (user.userMetadata?['full_name'] as String?) ??
+        (user.userMetadata?['name'] as String?) ??
+        (user.email?.split('@').first ?? 'Usuário');
+
+    await supabase.from('profiles').insert({
+      'id': user.id,
+      'full_name': fullName,
+      'email': user.email,
+    });
   }
 
   Future<int> getReportVotesCount({required int reportId}) async {

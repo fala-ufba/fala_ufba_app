@@ -101,6 +101,7 @@ class Auth extends _$Auth {
         data: {'full_name': name},
       );
       if (response.user != null) {
+        await _createProfileIfMissing(response.user!, name);
         state = AuthStateAuthenticated(UserModel.fromUser(response.user!));
       }
     } on AuthApiException catch (e) {
@@ -108,5 +109,13 @@ class Auth extends _$Auth {
     } catch (e) {
       state = AuthStateError(AuthError.fromGenericException(e));
     }
+  }
+
+  Future<void> _createProfileIfMissing(User user, String name) async {
+    await supabase.from('profiles').upsert({
+      'id': user.id,
+      'full_name': name,
+      'email': user.email,
+    });
   }
 }
