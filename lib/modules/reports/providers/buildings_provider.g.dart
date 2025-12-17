@@ -46,4 +46,4 @@ final class BuildingsProvider
   }
 }
 
-String _$buildingsHash() => r'51e79b4bde391e2b09a65d2e671cc6cf409d6406';
+String _$buildingsHash() => r'e7c1d866aaa023fce48badc400ad7830f75859e9';

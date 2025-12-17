@@ -1,6 +1,7 @@
 import 'package:fala_ufba/modules/auth/ui/screens/login_screen.dart';
 import 'package:fala_ufba/modules/auth/ui/screens/signup_screen.dart';
 import 'package:fala_ufba/modules/home/ui/screens/home_screen.dart';
+import 'package:fala_ufba/modules/profile/ui/screens/edit_profile_screen.dart';
 import 'package:fala_ufba/modules/profile/ui/screens/profile_screen.dart';
 import 'package:fala_ufba/modules/reports/ui/screens/report_detail_screen.dart';
 import 'package:fala_ufba/modules/reports/ui/screens/report_screen.dart';
@@ -83,6 +84,13 @@ class RouterNotifier extends ChangeNotifier {
               path: '/perfil',
               pageBuilder: (context, state) =>
                   const NoTransitionPage(child: ProfileScreen()),
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  path: '/editar',
+                  builder: (context, state) => const EditProfileScreen(),
+                ),
+              ],
             ),
           ],
         ),
