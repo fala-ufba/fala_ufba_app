@@ -12,6 +12,7 @@ class ReportCard extends StatelessWidget {
   final String? imagePath;
   final bool isUpvoted;
   final VoidCallback onUpvote;
+  final int likes;
 
   const ReportCard({
     super.key,
@@ -24,6 +25,7 @@ class ReportCard extends StatelessWidget {
     required this.updatedAt,
     required this.onUpvote,
     required this.isUpvoted,
+    required this.likes,
     this.imagePath,
   });
 
@@ -229,7 +231,6 @@ class ReportCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            // Local e última atualização
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -242,7 +243,7 @@ class ReportCard extends StatelessWidget {
                         size: 14,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.5),
+                        ).colorScheme.onSurface.withOpacity(0.5),
                       ),
                       const SizedBox(width: 4),
                       Flexible(
@@ -253,7 +254,7 @@ class ReportCard extends StatelessWidget {
                                 fontSize: 13,
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.7),
+                                ).colorScheme.onSurface.withOpacity(0.7),
                               ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -262,32 +263,81 @@ class ReportCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                FilledButton.icon(
-                  onPressed: () {
-                    onUpvote();
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 2,
                   ),
-                  icon: Icon(
-                    Icons.thumb_up_rounded,
+                  decoration: BoxDecoration(
                     color: isUpvoted
-                        ? Theme.of(context).colorScheme.tertiary
-                        : Theme.of(context).colorScheme.onTertiary,
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.tertiary.withOpacity(0.15)
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isUpvoted
+                          ? Theme.of(context).colorScheme.tertiary
+                          : Colors.transparent,
+                      width: 1.5,
+                    ),
                   ),
-                  label: const Text('Também Vi!', style: TextStyle(color: Colors.white),),
-                  
+                  child: Row(
+                    children: [
+                     GestureDetector(
+                        behavior: HitTestBehavior.translucent, 
+                        onTap: onUpvote,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.thumb_up_rounded,
+                              size: 22,
+                              color: isUpvoted
+                                  ? Theme.of(context).colorScheme.tertiary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.6),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Também Vi!',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isUpvoted
+                                    ? Theme.of(context).colorScheme.tertiary
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.8),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                likes.toString(),
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ],                            
             ),
           ],
         ),

@@ -220,6 +220,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         ? report.attachments.first
                                         : null,
                                     isUpvoted: isUpvoted,
+                                    likes: homeState.votesCountMap?[report.id] ?? 0,
                                     onUpvote: () async {
                                       final wasUpvoted = isUpvoted;
 
