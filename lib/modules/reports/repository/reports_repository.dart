@@ -63,12 +63,30 @@ class ReportsRepository {
   Future<({List<Report> reports, bool hasNextPage})> getPaginatedReports({
     required int page,
     required int pageSize,
+    ReportStatus? status,
+    int? buildingId,
+    String? searchQuery,
   }) async {
-    final response = await supabase
-        .from('reports')
-        .select('*, building:buildings(*)')
+    final from = (page - 1) * pageSize;
+    final to = page * pageSize;
+
+    var query = supabase.from('reports').select('*, building:buildings(*)');
+
+    if (status != null) {
+      query = query.eq('status', status.name.toUpperCase());
+    }
+    if (buildingId != null) {
+      query = query.eq('building_id', buildingId);
+    }
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      query = query.or(
+        'title.ilike.%$searchQuery%,description.ilike.%$searchQuery%',
+      );
+    }
+
+    final response = await query
         .order('created_at', ascending: false)
-        .range((page - 1) * pageSize, page * pageSize);
+        .range(from, to);
 
     final hasNextPage = response.length > pageSize;
     final reports = response
@@ -214,13 +232,13 @@ class ReportsRepository {
     final userName = response['profile']?['full_name'] as String? ?? 'Usuário';
     return Comment.fromJson({...response, 'user_name': userName});
   }
-  
+
   Future<int> getReportVotesCount({required int reportId}) async {
     final response = await supabase
         .from('report_votes')
         .select('id')
         .eq('report_id', reportId)
-        .count(CountOption.exact);  
+        .count(CountOption.exact);
 
     final totalVotes = response.count ?? 0;
     return totalVotes;

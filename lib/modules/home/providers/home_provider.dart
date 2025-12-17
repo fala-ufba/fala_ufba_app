@@ -1,6 +1,8 @@
 import 'package:fala_ufba/modules/home/models/home_filters.dart';
 import 'package:fala_ufba/modules/reports/models/report.dart';
+import 'package:fala_ufba/modules/reports/models/building.dart';
 import 'package:fala_ufba/modules/reports/repository/reports_repository.dart';
+import 'package:fala_ufba/modules/reports/providers/buildings_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_provider.g.dart';
@@ -12,6 +14,7 @@ class HomeState {
   final bool hasNextPage;
   final String? error;
   final Map<int, int>? votesCountMap;
+  final List<Building> buildings;
 
   const HomeState({
     this.filters = const HomeFilters(),
@@ -20,6 +23,7 @@ class HomeState {
     this.hasNextPage = true,
     this.error,
     this.votesCountMap = const {},
+    this.buildings = const [],
   });
 
   HomeState copyWith({
@@ -30,6 +34,7 @@ class HomeState {
     String? error,
     bool clearError = false,
     Map<int, int>? votesCountMap,
+    List<Building>? buildings,
   }) {
     return HomeState(
       filters: filters ?? this.filters,
@@ -38,6 +43,7 @@ class HomeState {
       hasNextPage: hasNextPage ?? this.hasNextPage,
       error: clearError ? null : (error ?? this.error),
       votesCountMap: votesCountMap ?? this.votesCountMap,
+      buildings: buildings ?? this.buildings,
     );
   }
 }
@@ -49,8 +55,12 @@ class Home extends _$Home {
 
   @override
   HomeState build() {
-    Future.microtask(() => getFirstPage());
-    return const HomeState(isLoading: true, votesCountMap:{});
+    Future.microtask(() async {
+      final buildings = await ref.read(buildingsProvider.future);
+      state = state.copyWith(buildings: buildings);
+      await getFirstPage();
+    });
+    return const HomeState(isLoading: true, votesCountMap: {});
   }
 
   Future<void> getFirstPage() async {
@@ -59,10 +69,18 @@ class Home extends _$Home {
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
+      final buildingId =
+          state.filters.location != null && state.filters.location!.isNotEmpty
+          ? int.tryParse(state.filters.location!)
+          : null;
+
       final repository = ref.read(reportsRepositoryProvider);
       final result = await repository.getPaginatedReports(
         page: _currentPage,
         pageSize: _pageSize,
+        status: state.filters.status,
+        buildingId: buildingId,
+        searchQuery: state.filters.searchQuery,
       );
 
       if (state.filters != filtersAtRequest) return;
@@ -94,6 +112,12 @@ class Home extends _$Home {
       final result = await repository.getPaginatedReports(
         page: nextPage,
         pageSize: _pageSize,
+        status: state.filters.status,
+        buildingId:
+            state.filters.location != null && state.filters.location!.isNotEmpty
+            ? int.tryParse(state.filters.location!)
+            : null,
+        searchQuery: state.filters.searchQuery,
       );
 
       if (state.filters != filtersAtRequest) return;
@@ -146,11 +170,9 @@ class Home extends _$Home {
       final repository = ref.read(reportsRepositoryProvider);
       await repository.removeUpvote(reportId: reportId);
 
-      _updateVotesCount(reportId, increment: false); 
+      _updateVotesCount(reportId, increment: false);
     } catch (e) {
-      state = state.copyWith(
-        error: 'Erro ao remover voto: $e',
-      );
+      state = state.copyWith(error: 'Erro ao remover voto: $e');
     }
   }
 
@@ -162,23 +184,19 @@ class Home extends _$Home {
 
       return votedReports;
     } catch (e) {
-      state = state.copyWith(
-        error: 'Erro ao carregar votos do usuário: $e',
-      );
+      state = state.copyWith(error: 'Erro ao carregar votos do usuário: $e');
       rethrow;
     }
   }
-  
+
   Future<void> upvoteReport(int reportId) async {
     try {
       final repository = ref.read(reportsRepositoryProvider);
       await repository.upvoteReport(reportId: reportId);
 
-     _updateVotesCount(reportId, increment: true); 
+      _updateVotesCount(reportId, increment: true);
     } catch (e) {
-      state = state.copyWith(
-        error: 'Erro ao registrar voto: $e',
-      );
+      state = state.copyWith(error: 'Erro ao registrar voto: $e');
     }
   }
 
@@ -189,16 +207,16 @@ class Home extends _$Home {
 
       return count;
     } catch (e) {
-      state = state.copyWith(
-        error: 'Erro ao carregar quantidade de votos: $e',
-      );
+      state = state.copyWith(error: 'Erro ao carregar quantidade de votos: $e');
       return 0;
     }
   }
 
   Future<void> loadVotesForReports(List<Report> reports) async {
     final repository = ref.read(reportsRepositoryProvider);
-    final Map<int, int> updatedVotesMap = Map<int, int>.from(state.votesCountMap ?? {});
+    final Map<int, int> updatedVotesMap = Map<int, int>.from(
+      state.votesCountMap ?? {},
+    );
 
     for (final report in reports) {
       final count = await repository.getReportVotesCount(reportId: report.id);
@@ -211,8 +229,9 @@ class Home extends _$Home {
   void _updateVotesCount(int reportId, {required bool increment}) {
     final currentCount = (state.votesCountMap ?? {})[reportId] ?? 0;
     final newMap = Map<int, int>.from(state.votesCountMap ?? {});
-    newMap[reportId] = increment ? currentCount + 1 : (currentCount - 1).clamp(0, 9999);
+    newMap[reportId] = increment
+        ? currentCount + 1
+        : (currentCount - 1).clamp(0, 9999);
     state = state.copyWith(votesCountMap: newMap);
   }
-
 }

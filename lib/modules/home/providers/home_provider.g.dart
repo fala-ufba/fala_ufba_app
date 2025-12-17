@@ -40,7 +40,7 @@ final class HomeProvider extends $NotifierProvider<Home, HomeState> {
   }
 }
 
-String _$homeHash() => r'fc3862a8dae4874d09af6a6b2e101eece98a868e';
+String _$homeHash() => r'5cd3f2eb256880de9ab639f7fe3c1a9db3645d93';
 
 abstract class _$Home extends $Notifier<HomeState> {
   HomeState build();
